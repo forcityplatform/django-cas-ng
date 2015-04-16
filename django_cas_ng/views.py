@@ -78,11 +78,16 @@ def _logout_url(request, next_page=None):
 
     url = urllib_parse.urljoin(settings.CAS_SERVER_URL, 'logout')
     if next_page:
-        protocol = get_protocol(request)
-        host = request.get_host()
-        next_page_url = urllib_parse.urlunparse(
-            (protocol, host, next_page, '', '', ''),
-        )
+        #full url
+        if next_page.startswith("http"):
+            next_page_url = next_page
+        #relative url
+        else:
+            protocol = get_protocol(request)
+            host = request.get_host()
+            next_page_url = urllib_parse.urlunparse(
+                (protocol, host, next_page, '', '', ''),
+            )
         url += '?' + urllib_parse.urlencode({'url': next_page_url})
     return url
 
