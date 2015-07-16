@@ -27,11 +27,13 @@ def get_protocol(request):
 def _service_url(request, redirect_to=None):
     """Generates application service URL for CAS"""
 
-    protocol = get_protocol(request)
-    host = request.get_host()
-    service = urllib_parse.urlunparse(
-        (protocol, host, request.get_full_path(), '', '', ''),
-    )
+    service = getattr(settings, "CAS_SERVICE_URL", None)
+    if not service:
+        protocol = get_protocol(request)
+        host = request.get_host()
+        service = urllib_parse.urlunparse(
+            (protocol, host, request.get_full_path(), '', '', ''),
+        )
     if redirect_to:
         if '?' in service:
             service += '&'
